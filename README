@@ -1,0 +1,26 @@
+Install Node.JS (http://nodejs.org/#download), NPM (http://npmjs.org/) and Foreman (http://ddollar.github.com/foreman/).
+
+Symlinks a package folder into your system, so that changes are automatically reflected, and install the "dependencies" and "devDependencies" from package.json:
+$ npm link .
+
+Run:
+$ foreman start
+
+or as simple as:
+$ node src/server.js
+
+List of all modules/libraries in use is in package.json or below:
+https://github.com/LearnBoost/mongoose
+https://github.com/felixge/node-mysql
+https://github.com/mranney/node_redis
+https://github.com/visionmedia/express
+https://github.com/caolan/async
+https://github.com/lorenwest/node-config
+https://github.com/LearnBoost/cluster
+https://github.com/isaacs/node-supervisor
+https://github.com/flatiron/winston
+https://github.com/broofa/node-uuid
+https://github.com/visionmedia/expresso
+https://github.com/dannycoates/node-inspector
+https://github.com/mhevery/jasmine-node
+
