@@ -1,4 +1,5 @@
 var app,
+    cluster     = require('cluster'),
     express     = require('express'),
     winston     = require('winston'),
     CFG_SERVER  = require('config').server;
@@ -15,6 +16,7 @@ process.addListener('uncaughtException', function (err, stack) {
 
 // basically a wrapper around logger
 var logmessage = function(message) {
+    message = process.env.NODE_WORKER_ID + ' : ' + message;
     if (winston) {
         winston.log('info', message);
     } else {
@@ -29,14 +31,6 @@ var app = express.createServer();
 app.logmessage = logmessage;
 module.exports.app = app;
 
-// use port from environment or from the appropriate config
-var port = process.env.PORT || CFG_SERVER.port;
-
-// let's listen on the port
-app.listen(port, function() {
-    app.logmessage('Listening on :' + port + ' in "' + app.settings.env + '" mode...');
-    return 0;
-});
 
 // configure our server
 app.configure(function() {
@@ -45,4 +39,20 @@ app.configure(function() {
 });
 
 // here load rest-api so we don't clutter this piece of code more
-require('./api-rest.js');
+require('./api-rest');
+
+// use port and number of cluster forks from environment or from the appropriate config
+var port = process.env.PORT || CFG_SERVER.port,
+    forks = process.env.CLUSTER_FORKS || CFG_SERVER.cluster_forks;
+
+if (cluster.isMaster) {
+    app.logmessage('Staring ' + forks + ' fork(s)');
+    for (var i = 0; i < forks; i++) {
+        var worker = cluster.fork();
+    }
+} else {
+    app.listen(port, function() {
+        app.logmessage('Listening on :' + port + ' in "' + app.settings.env + '" mode...');
+        return 0;
+    });
+}
