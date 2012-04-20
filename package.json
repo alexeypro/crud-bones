@@ -19,6 +19,7 @@
         "mysql"         : "0.9.5",
         "redis"         : "0.7.1",
         "express"       : "3.0.0alpha1",
+        "ejs"           : "0.7.1",
         "async"         : "0.1.18",
         "config"        : "0.4.11",
         "cluster"       : "0.7.7",

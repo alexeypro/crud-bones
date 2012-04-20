@@ -2,13 +2,15 @@ var app,
     util            = require('util'),
     cluster         = require('cluster'),
     express         = require('express'),
+    ejs             = require('ejs'),
     winston         = require('winston'),
     async           = require('async'),
     mysql           = require('mysql'),
     mongoose        = require('mongoose'),
     redis           = require('redis');
 
-var envConfig       = require('config')
+var defs            = require('./defs'),
+    envConfig       = require('config'),
     CFG_SERVER      = envConfig.server,
     CFG_DB_MYSQL    = envConfig.dbMysql,
     CFG_DB_MONGO    = envConfig.dbMongo,
@@ -39,9 +41,18 @@ var logmessage = function(message) {
 
 // creating and configuring server
 var app = express.createServer();
+app.configure(function() {
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.set('view engine', 'ejs');
+    app.set('view options', { 
+        layout: false 
+    });
+});
 
 // let's load app with more stuff and export it
 app.envConfig = envConfig;
+app.defs = defs;
 app.logmessage = logmessage;
 
 // we want to set up connections only on "workers, not on cluster/master
@@ -97,12 +108,6 @@ if (process.env.NODE_WORKER_ID) {
         app.mysqlClient = results.mysqlConnection;
         app.mongoClient = results.mongoConnection;
         app.redisClient = results.redisConnection;
-
-        // configure our server
-        app.configure(function() {
-            app.use(express.bodyParser());
-            app.use(express.methodOverride());
-        });
 
         // here load rest-api so we don't clutter this piece of code more
         require('./api-rest');
