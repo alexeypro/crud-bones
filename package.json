@@ -16,7 +16,7 @@
 
     "dependencies": {
         "mongoose"      : "2.5.13",
-        "mysql"         : "0.9.6",
+        "mysql"         : "0.9.5",
         "redis"         : "0.7.1",
         "express"       : "3.0.0alpha1",
         "async"         : "0.1.18",
