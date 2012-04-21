@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title><%= message %></title>
-    <description><%= message %></description>
-    <pubDate>Fri, 20 Apr 2012 11:03:37 -0700</pubDate>
-    <link>http://www.google.com/</link>
-    <atom:link href="http://www.google.com/feed.xml" rel="self" type="application/rss+xml" />
+    <title>Feed Tiltle</title>
+    <description>Feed Description</description>
+    <pubDate><%= updated %></pubDate>
+    <link><%= siteUrl %></link>
+    <atom:link href="<%= siteUrl %>/feed.xml" rel="self" type="application/rss+xml" />
+    <% for (var i=0; i < results.length; i++) { %>
     <item>
-        <title><%= message %></title>
-        <pubDate>Fri, 20 Apr 2012 00:00:00 -0700</pubDate>
-        <link>http://www.google.com/?id=1</link>
-        <guid>http://www.google.com/?id=1&amp;more=1</guid>
+        <guid><%= results[i].item_id %></guid>
+        <title><%= results[i].title %></title>
+        <pubDate><%= results[i].created %></pubDate>
+        <link><%= siteUrl %>/retrieve/<%= results[i].item_id %>.html</link>
         <description><![CDATA[
-            <%= message %>
+            <%= results[i].description %>
         ]]></description>
     </item>
+    <% } %>
 </channel>
 </rss>

@@ -1,0 +1,13 @@
+<html>
+<head><title><%= result.title %></title></head>
+<body>
+    <ul>
+        <li><strong>ID:</strong> <%= result.item_id %></li>
+        <li><strong>Title:</strong> <%= result.title %></li>
+        <li><strong>Description:</strong> <%= result.description %></li>
+        <li><strong>Created:</strong> <%= result.created %></li>
+        <li><strong>JSON:</strong> <a href="<%= siteUrl %>/retrieve/<%= result.item_id %>.jsonp"><%= siteUrl %>/retrieive/<%= result.item_id %>.jsonp</a></li>
+        <li><form action="<%= siteUrl %>/delete/<%= result.item_id %>.jsonp" method="post"><input type="submit" value="DELETE"/></form></li>
+    </ul>
+</body>
+</html>

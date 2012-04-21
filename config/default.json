@@ -1,13 +1,14 @@
 {
     "server": {
         "port":         5000,
-        "forks":        1
+        "forks":        1,
+        "siteUrl":      "http://localhost:5000"
     },
     "dbMysql": {
-        "host":         "db4free.net",
+        "host":         "localhost",
         "port":         3306,
-        "username":     "alexeypro",
-        "password":     "f3900a788b4ae0bc6fe173e32451a047",
+        "username":     "root",
+        "password":     "",
         "dbname":       "crudbonesdb"
     },
     "dbMongo": {
