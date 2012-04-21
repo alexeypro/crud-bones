@@ -15,7 +15,7 @@ dao.registerModel(Item);
 var createImplementation = function(req, res) {
     app.logmessage('/create');
     res.contentType(app.defs.CONTENTTYPE_JSON);
-    res.send({ status: app.defs.RESPONSE_OK });
+    res.send({ status: app.defs.RESPONSE_INPROCESS });
     var i = new Item(null, req.body.title, req.body.description, null);
     app.logmessage('/create Item = ' + i.asArray());
     dao.create(i, function(error, result) {
@@ -87,7 +87,7 @@ app.get('/retrieve/:id.jsonp', function(req, res) {
 app.post('/update/:id.jsonp', function(req, res) {
     app.logmessage('/update/' + req.params.id);
     res.contentType(app.defs.CONTENTTYPE_JSON);
-    res.send({ status: app.defs.RESPONSE_OK });
+    res.send({ status: app.defs.RESPONSE_INPROCESS });
     var i = new Item(req.body.item_id, req.body.title, req.body.description, req.body.created);
     app.logmessage('/update/' + req.params.id + ' Item = ' + i.asArray());
     dao.update(i, function(error, result) {
@@ -99,7 +99,7 @@ app.post('/update/:id.jsonp', function(req, res) {
 var deleteImplementation = function(req, res) {
     app.logmessage('/delete/' + req.params.id);
     res.contentType(app.defs.CONTENTTYPE_JSON);
-    res.send({ status: app.defs.RESPONSE_OK });
+    res.send({ status: app.defs.RESPONSE_INPROCESS });
     dao.remove(Item, req.params.id, function(error, result) {
         app.logmessage('/delete/' + req.params.id + ' done');
         return;

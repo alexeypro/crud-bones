@@ -54,7 +54,39 @@ DaoMongo.prototype.create = function(item, callback) {
 };
 
 DaoMongo.prototype.update = function(item, callback) {
-    throw new Error('Not implemented');
+    var that = this;
+    var created = dateformat('yyyy-mm-dd HH:MM:ss');
+    if (item) {
+        var modelName = helper.capitalize(item.getEntityName() + 'MongoModel');
+        var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+        var itemId = (item.asArray())[0];
+        var findObj = { };
+        findObj[ item.getEntityIndex() ] = itemId;
+        var propNames = item.getPropNamesAsArray();
+        var slicedFields = propNames.slice(-propNames.length+1);    // without index
+        var updateObj = { };
+        for (var i = 0; i != slicedFields.length; i++) {
+            updateObj[ slicedFields[i] ] = item[ slicedFields[i] ];
+        }
+        this.log('update(): ' + JSON.stringify(findObj));
+        this.log('update(): ' + JSON.stringify(updateObj));
+        var options = { };
+        NeededMongoModel.update(findObj, { $set: updateObj }, options, function(err){
+            if (err) {
+                that.log('Error: update(): ' + err);
+            }
+            if (callback) {
+                callback(false, item);
+            }
+            return item;
+        });
+    } else {
+        this.log('Error: update(): cannot update item');
+        if (callback) {
+            callback(true, null);
+        }
+        return null;
+    }
 };
 
 DaoMongo.prototype.list = function(itemClass, propNames, callback) {
