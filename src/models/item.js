@@ -5,6 +5,9 @@ function Item(id, title, description, created) {
     this.created = created;
 }
 
+// every Model should implement the following stuff. 
+// TODO: find a better way to do that!!!
+
 Item.entityName = 'items';
 Item.entityIndex = 'item_id';
 Item.entityCreated = 'created';
