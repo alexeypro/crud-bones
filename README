@@ -28,8 +28,8 @@ For simplicity sake I'll describe the process of getting it on Heroku:
 https://devcenter.heroku.com/articles/nodejs
 
 $ heroku create crud-bones-dev --stack cedar --remote heroku-dev
-$ heroku config:add NODE_ENV=development --app crud-bones-dev
 $ git push heroku-dev master
+$ heroku config:add NODE_ENV=staging --app crud-bones-dev
 
 Or if you want to push to existing Heroku instance:
 
@@ -37,7 +37,7 @@ $ git init
 $ git add .
 $ git commit -m 'bundle for heroku-dev deploy'
 $ git remote add heroku-dev git@heroku.com:crud-bones-dev.git
-$ heroku config:add NODE_ENV=development --app crud-bones-dev
+$ heroku config:add NODE_ENV=staging --app crud-bones-dev
 $ git push -f heroku-dev master
 
 
