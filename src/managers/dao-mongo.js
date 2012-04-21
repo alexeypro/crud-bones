@@ -73,7 +73,19 @@ DaoMongo.prototype.list = function(itemClass, propNames, callback) {
 };
 
 DaoMongo.prototype.get = function(itemClass, itemId, callback) {
-    throw new Error('Not implemented');
+    var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
+    var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+    var findObj = { };
+    findObj[ itemClass.entityIndex ] = itemId;
+    NeededMongoModel.findOne(findObj, function (err, result) {
+        if (err) {
+            that.log('Error: get(): ' + err);
+        }
+        if (callback) {
+            callback(false, result);
+        }
+        return result;
+    });    
 };
 
 DaoMongo.prototype.remove = function(itemClass, itemId, callback) {
