@@ -19,6 +19,16 @@ app.get('/create.jsonp', function(req, res) {
     });
 });
 
+app.get('/', function(req, res) {
+    app.logmessage('/');
+    dao.list(Item, null, function(err, results) {
+        app.logmessage('/ done');
+        res.contentType(app.defs.CONTENTTYPE_HTML);
+        res.render('index.html.ejs', { results: results, siteUrl: app.envConfig.server.siteUrl });
+        return;
+    });
+});
+
 app.get('/feed.jsonp', function(req, res) {
     app.logmessage('/feed');
     dao.list(Item, null, function(err, results) {
@@ -85,7 +95,6 @@ var deleteImplementation = function(req, res) {
         return;
     });
 };
-
-app.delete('/delete/:id.jsonp', deleteImplementation);
+app.del('/delete/:id.jsonp', deleteImplementation);
 app.post('/delete/:id.jsonp', deleteImplementation);
 
