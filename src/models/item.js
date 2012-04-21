@@ -13,6 +13,14 @@ Item.prototype.getEntityName = function() {
     return Item.entityName;
 };
 
+Item.prototype.getEntityIndex = function() {
+    return Item.entityIndex;
+};
+
+Item.prototype.getPropNamesAsArray = function() {
+    return Item.propNamesAsArray;
+};
+
 Item.prototype.asArray = function() {
     return [
         this.item_id,

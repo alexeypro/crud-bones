@@ -35,9 +35,38 @@ DaoMysql.prototype.create = function(item, callback) {
     }
 };
 
+DaoMysql.prototype.update = function(item, callback) {
+    var updated = helper.nowUTC();
+    if (item) {
+        item.created = updated;
+        // we assume first element in props is an index
+        var propNames = item.getPropNamesAsArray();
+        var slicedFields = propNames.slice(-propNames.length+1);
+        var fieldsStr = slicedFields.join(' = ?, ') + ' = ?';
+        var asArray = item.asArray();
+        var itemAsArrayWithMovedIndex = asArray.splice(-asArray.length+1);
+        itemAsArrayWithMovedIndex.push(asArray[0]);
+        var queryStr = 'UPDATE ' + this.config.dbname + '.' + item.getEntityName() + ' SET ' + fieldsStr + ' WHERE ' + item.getEntityIndex() + ' = ?';
+        this.log('update(): ' + queryStr);
+        //this.log('update(): ' + itemAsArrayWithMovedIndex);
+        this.connection.query(queryStr, itemAsArrayWithMovedIndex, function(err) {
+            if (callback) {
+                callback(false, item);
+            }
+            return item;
+        });
+    } else {
+        this.log('Error: cannot update item');
+        if (callback) {
+            callback(true, null);
+        }
+        return null;
+    }
+};
+
 DaoMysql.prototype.list = function(itemClass, propNames, callback) {
     var fields = propNames ? propNames : itemClass.propNamesAsArray;
-    var queryStr = 'SELECT ' + fields.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName;
+    var queryStr = 'SELECT ' + fields.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName + ' ORDER BY ' + itemClass.entityIndex + ' DESC';
     this.log('list(): ' + queryStr);
     this.connection.query(queryStr, function(err, results, fields) {
         if (callback) {

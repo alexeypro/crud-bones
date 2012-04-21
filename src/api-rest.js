@@ -7,7 +7,7 @@ var util        = require('util'),
 
 var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
 
-app.post('/create.jsonp', function(req, res) {
+var createImplementation = function(req, res) {
     app.logmessage('/create');
     res.contentType(app.defs.CONTENTTYPE_JSON);
     res.send({ status: app.defs.RESPONSE_OK });
@@ -17,14 +17,16 @@ app.post('/create.jsonp', function(req, res) {
         app.logmessage('/created done');
         return;
     });
-});
+};
+app.post('/create.jsonp', createImplementation);
+app.put('/create.jsonp', createImplementation);
 
 app.get('/', function(req, res) {
     app.logmessage('/');
     dao.list(Item, null, function(err, results) {
         app.logmessage('/ done');
         res.contentType(app.defs.CONTENTTYPE_HTML);
-        res.render('index.html.ejs', { results: results, siteUrl: app.envConfig.server.siteUrl });
+        res.render('index.html.ejs', { results: results || [] , siteUrl: app.envConfig.server.siteUrl });
         return;
     });
 });
@@ -34,7 +36,7 @@ app.get('/feed.jsonp', function(req, res) {
     dao.list(Item, null, function(err, results) {
         app.logmessage('/feed done');
         res.contentType(app.defs.CONTENTTYPE_JSON);
-        res.send({ status: app.defs.RESPONSE_OK, results: results });
+        res.send({ status: app.defs.RESPONSE_OK, results: results || [] });
         return;
     });
 });
@@ -44,7 +46,7 @@ app.get('/feed.xml', function(req, res) {
     dao.list(Item, null, function(err, results) {
         app.logmessage('/feed done');
         res.contentType(app.defs.CONTENTTYPE_XML);
-        res.render('feed.xml.ejs', { results: results, siteUrl: app.envConfig.server.siteUrl, updated: helper.nowUTC() });
+        res.render('feed.xml.ejs', { results: results || [] , siteUrl: app.envConfig.server.siteUrl, updated: helper.nowUTC() });
         return;
     });
 });
@@ -77,13 +79,16 @@ app.get('/retrieve/:id.jsonp', function(req, res) {
     });
 });
 
-//TODO: not done at all
-app.get('/update/:id.jsonp', function(req, res) {
-    app.logmessage('/update/:id');
+app.post('/update/:id.jsonp', function(req, res) {
+    app.logmessage('/update/' + req.params.id);
     res.contentType(app.defs.CONTENTTYPE_JSON);
-    res.send({ status: app.defs.RESPONSE_ERROR });
-    throw new Error('Not implemented!');
-    return;
+    res.send({ status: app.defs.RESPONSE_OK });
+    var i = new Item(req.body.item_id, req.body.title, req.body.description, req.body.created);
+    app.logmessage('/update/' + req.params.id + ' Item = ' + i.asArray());
+    dao.update(i, function(error, result) {
+        app.logmessage('/update/' + req.params.id + ' done');
+        return;
+    });
 });
 
 var deleteImplementation = function(req, res) {
