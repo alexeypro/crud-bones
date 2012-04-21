@@ -11,6 +11,7 @@ var helper = {
     nowUTC: function() {
         return this.toUTC(this.now());
     }
+
 }
 
 module.exports = helper;

@@ -1,5 +1,6 @@
-var uuid    = require('node-uuid'),
-    helper  = require('../helper');
+var uuid        = require('node-uuid'),
+    helper      = require('../helper'),
+    dateformat  = require('dateformat');
 
 function DaoMysql(cfg, conn, log) {
     if (!cfg || !conn || !log) {
@@ -12,7 +13,7 @@ function DaoMysql(cfg, conn, log) {
 
 DaoMysql.prototype.create = function(item, callback) {
     var that = this;
-    var created = helper.nowUTC();
+    var created = dateformat('yyyy-mm-dd HH:MM:SS');
     var item_id = uuid();
     if (item) {
         item.item_id = item_id;
@@ -41,7 +42,7 @@ DaoMysql.prototype.create = function(item, callback) {
 
 DaoMysql.prototype.update = function(item, callback) {
     var that = this;
-    var updated = helper.nowUTC();
+    var updated = dateformat('yyyy-mm-dd HH:MM:SS');
     if (item) {
         item.created = updated;
         // we assume first element in props is an index
