@@ -7,12 +7,12 @@ var util        = require('util'),
 
 var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
 
-//TODO: make it put and use params
-app.get('/create.jsonp', function(req, res) {
+app.post('/create.jsonp', function(req, res) {
     app.logmessage('/create');
     res.contentType(app.defs.CONTENTTYPE_JSON);
     res.send({ status: app.defs.RESPONSE_OK });
-    var i = new Item(null, 'Hello World', 'This is the "Hello World" description', null);
+    var i = new Item(null, req.body.title, req.body.description, null);
+    app.logmessage('/create Item = ' + i.asArray());
     dao.create(i, function(error, result) {
         app.logmessage('/created done');
         return;

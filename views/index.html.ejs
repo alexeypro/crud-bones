@@ -1,0 +1,29 @@
+<html>
+<head><title>Feed Title</title></head>
+<body>
+    Create New: <br/>
+    <form action="<%= siteUrl %>/create.jsonp" method="post">
+        <strong>Title:</strong> <input type="text" name="title" value="" /> <br/>
+        <strong>Description:</strong> <input type="text" name="description" value="" />
+        <input type="submit" value="CREATE"/>
+    </form>
+    <br />
+    <hr />
+    <br />
+    <% for (var i=0; i < results.length; i++) { %>
+    <form action="<%= siteUrl %>/update/<%= results[i].item_id %>.jsonp" method="post">
+    <input type="hidden" name="item_id" value="<%= results[i].item_id %>" />
+    <input type="hidden" name="created" value="<%= results[i].created %>" />
+    <ul>
+        <li><strong>ID:</strong> <%= results[i].item_id %></li>
+        <li><strong>Title:</strong> <input type="text" name="title" value="<%= results[i].title %>" /></li>
+        <li><strong>Description:</strong> <input type="text" name="description" value="<%= results[i].description %>" /></li>
+        <li><strong>Created:</strong> <%= results[i].created %></li>
+        <li><strong>HTML:</strong> <a href="<%= siteUrl %>/retrieve/<%= results[i].item_id %>.html"><%= siteUrl %>/retrieive/<%= results[i].item_id %>.html</a></li>
+        <li><strong>JSON:</strong> <a href="<%= siteUrl %>/retrieve/<%= results[i].item_id %>.jsonp"><%= siteUrl %>/retrieive/<%= results[i].item_id %>.jsonp</a></li>
+        <li><input type="submit" value="UPDATE"/></li>
+    </ul>
+    </form>
+    <% } %>
+</body>
+</html>

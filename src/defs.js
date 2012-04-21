@@ -8,7 +8,6 @@ var defs = {
     RESPONSE_OK      :    'OK',
     RESPONSE_ERROR   :    'ERROR'
 
-
 };
 
 module.exports = defs;
