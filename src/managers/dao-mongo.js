@@ -85,12 +85,23 @@ DaoMongo.prototype.get = function(itemClass, itemId, callback) {
             callback(false, result);
         }
         return result;
-    });    
+    });
 };
 
 DaoMongo.prototype.remove = function(itemClass, itemId, callback) {
-    throw new Error('Not implemented');
+    var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
+    var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+    var findObj = { };
+    findObj[ itemClass.entityIndex ] = itemId;
+    NeededMongoModel.remove(findObj, function (err, result) {
+        if (err) {
+            that.log('Error: remove(): ' + err);
+        }
+        if (callback) {
+            callback(false, result);
+        }
+        return result;
+    });    
 };
-
 
 module.exports.DaoMongo = DaoMongo;
