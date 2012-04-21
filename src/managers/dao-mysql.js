@@ -13,7 +13,7 @@ function DaoMysql(cfg, conn, log) {
 
 DaoMysql.prototype.create = function(item, callback) {
     var that = this;
-    var created = dateformat('yyyy-mm-dd HH:MM:SS');
+    var created = dateformat('yyyy-mm-dd HH:MM:ss');
     var item_id = uuid();
     if (item) {
         item.item_id = item_id;
@@ -42,7 +42,7 @@ DaoMysql.prototype.create = function(item, callback) {
 
 DaoMysql.prototype.update = function(item, callback) {
     var that = this;
-    var updated = dateformat('yyyy-mm-dd HH:MM:SS');
+    var updated = dateformat('yyyy-mm-dd HH:MM:ss');
     if (item) {
         item.created = updated;
         // we assume first element in props is an index
