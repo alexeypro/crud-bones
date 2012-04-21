@@ -6,7 +6,11 @@ var util        = require('util'),
     DaoMongo    = require('./managers/dao-mongo').DaoMongo,
     Item        = require('./models/item').Item;
 
-var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
+// Hint: uncomment the line with MySQL and it'll be working with MySQL. :-) Magic, right?
+//var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
+var dao         = new DaoMongo(app.envConfig.dbMongo, app.mongoClient, app.logmessage);
+
+dao.registerModel(Item);
 
 var createImplementation = function(req, res) {
     app.logmessage('/create');

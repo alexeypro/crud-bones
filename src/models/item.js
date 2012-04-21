@@ -7,6 +7,8 @@ function Item(id, title, description, created) {
 
 Item.entityName = 'items';
 Item.entityIndex = 'item_id';
+Item.entityCreated = 'created';
+Item.entitySchema = { item_id: String, title: String, description: String, created: Date};
 Item.propNamesAsArray = [ 'item_id', 'title', 'description', 'created' ];
 
 Item.prototype.getEntityName = function() {
@@ -15,6 +17,14 @@ Item.prototype.getEntityName = function() {
 
 Item.prototype.getEntityIndex = function() {
     return Item.entityIndex;
+};
+
+Item.prototype.getEntityCreated = function() {
+    return Item.entityCreated;
+};
+
+Item.prototype.getEntitySchema = function() {
+    return Item.entitySchema;
 };
 
 Item.prototype.getPropNamesAsArray = function() {

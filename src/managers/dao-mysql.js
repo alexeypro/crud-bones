@@ -11,6 +11,11 @@ function DaoMysql(cfg, conn, log) {
     this.log = log;
 }
 
+DaoMysql.prototype.registerModel = function(itemClass) {
+    // Don't need this here, but keeping for compataibility with my other DAOs.
+    return;
+};
+
 DaoMysql.prototype.create = function(item, callback) {
     var that = this;
     var created = dateformat('yyyy-mm-dd HH:MM:ss');
