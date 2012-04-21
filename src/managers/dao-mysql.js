@@ -11,6 +11,7 @@ function DaoMysql(cfg, conn, log) {
 }
 
 DaoMysql.prototype.create = function(item, callback) {
+    var that = this;
     var created = helper.nowUTC();
     var item_id = uuid();
     if (item) {
@@ -22,7 +23,7 @@ DaoMysql.prototype.create = function(item, callback) {
         this.log('create(): ' + queryStr);
         this.connection.query(queryStr, itemAsArray, function(err) {
             if (err) {
-                this.log('Error: create(): ' + err);
+                that.log('Error: create(): ' + err);
             }
             if (callback) {
                 callback(false, item);
@@ -39,6 +40,7 @@ DaoMysql.prototype.create = function(item, callback) {
 };
 
 DaoMysql.prototype.update = function(item, callback) {
+    var that = this;
     var updated = helper.nowUTC();
     if (item) {
         item.created = updated;
@@ -53,7 +55,7 @@ DaoMysql.prototype.update = function(item, callback) {
         this.log('update(): ' + queryStr);
         //this.log('update(): ' + itemAsArrayWithMovedIndex);
         this.connection.query(queryStr, itemAsArrayWithMovedIndex, function(err) {
-            this.log('Error: update(): ' + err);
+            that.log('Error: update(): ' + err);
             if (callback) {
                 callback(false, item);
             }
@@ -69,11 +71,12 @@ DaoMysql.prototype.update = function(item, callback) {
 };
 
 DaoMysql.prototype.list = function(itemClass, propNames, callback) {
+    var that = this;
     var fields = propNames ? propNames : itemClass.propNamesAsArray;
     var queryStr = 'SELECT ' + fields.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName + ' ORDER BY ' + itemClass.entityIndex + ' DESC';
     this.log('list(): ' + queryStr);
     this.connection.query(queryStr, function(err, results, fields) {
-        this.log('Error: list(): ' + err);
+        that.log('Error: list(): ' + err);
         if (callback) {
             callback(err, results);
         }
@@ -82,10 +85,11 @@ DaoMysql.prototype.list = function(itemClass, propNames, callback) {
 };
 
 DaoMysql.prototype.get = function(itemClass, itemId, callback) {
+    var that = this;
     var queryStr = 'SELECT ' + itemClass.propNamesAsArray.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName + ' WHERE ' + itemClass.entityIndex + ' = ? LIMIT 1';
     this.log('get(): ' + queryStr);
     this.connection.query(queryStr, [ itemId ], function(err, result, fields) {
-        this.log('Error: get(): ' + err);
+        that.log('Error: get(): ' + err);
         if (callback) {
             callback(err, result ? result[0] : null);
         }
@@ -94,10 +98,11 @@ DaoMysql.prototype.get = function(itemClass, itemId, callback) {
 };
 
 DaoMysql.prototype.remove = function(itemClass, itemId, callback) {
+    var that = this;
     var queryStr = 'DELETE FROM ' + this.config.dbname + '.' + itemClass.entityName + ' WHERE ' + itemClass.entityIndex + ' = ?';
     this.log('remove(): ' + queryStr);
     this.connection.query(queryStr, [ itemId ], function(err, result, fields) {
-        this.log('Error: remove(): ' + err);
+        that.log('Error: remove(): ' + err);
         if (callback) {
             callback(err, null);
         }
