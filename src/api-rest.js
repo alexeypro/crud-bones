@@ -3,6 +3,7 @@ app = module.parent.exports.app;
 var util        = require('util'),
     helper      = require('./helper'),
     DaoMysql    = require('./managers/dao-mysql').DaoMysql,
+    DaoMongo    = require('./managers/dao-mongo').DaoMongo,
     Item        = require('./models/item').Item;
 
 var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
