@@ -21,8 +21,8 @@ DaoMysql.prototype.create = function(item, callback) {
     var created = dateformat('yyyy-mm-dd HH:MM:ss');
     var item_id = uuid();
     if (item) {
-        item.item_id = item_id;
-        item.created = created;
+        item[ item.getEntityIndex() ] = item_id;
+        item[ item.getEntityCreated() ] = created;
         var itemAsArray = item.asArray();
         var valuesForQuery = '?' + Array(itemAsArray.length).join(',?');
         var queryStr = 'INSERT INTO ' + this.config.dbname + '.' + item.getEntityName() + ' VALUES(' + valuesForQuery + ')';
@@ -49,7 +49,7 @@ DaoMysql.prototype.update = function(item, callback) {
     var that = this;
     var updated = dateformat('yyyy-mm-dd HH:MM:ss');
     if (item) {
-        item.created = updated;
+        item[ item.getEntityCreated() ] = created;
         // we assume first element in props is an index
         var propNames = item.getPropNamesAsArray();
         var slicedFields = propNames.slice(-propNames.length+1);
