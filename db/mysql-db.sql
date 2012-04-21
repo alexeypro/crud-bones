@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS items;
 CREATE TABLE items (
     item_id VARCHAR(128) NOT NULL,
     title TEXT NOT NULL,
-    description TEXT DEFAULT '',
+    description TEXT,
     created TIMESTAMP NOT NULL,
     PRIMARY KEY (item_id)
 ) ENGINE=MyISAM;
