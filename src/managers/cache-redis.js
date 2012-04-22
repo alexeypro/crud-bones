@@ -2,13 +2,16 @@ var util        = require('util'),
     helper      = require('../helper'),
     dateformat  = require('dateformat');
 
-function CacheRedis(cfg, conn, log) {
+function CacheRedis(cfg, conn, log, defaultExpireSeconds) {
     if (!cfg || !conn || !log) {
         throw new Error("Config and connection vars, and log function are required.");
     }
     this.config = cfg;
     this.connection = conn;
     this.log = log;
+    // if defaultExpireSeconds is not set we set it to 60
+    // but it also can be overwritten by item's info
+    this.expireSeconds = defaultExpireSeconds || 60;
 }
 
 CacheRedis.prototype.putItem = function(item, callback) {
@@ -19,7 +22,7 @@ CacheRedis.prototype.putItem = function(item, callback) {
     this.log('cache putItem(): key = ' + cacheKey + ' value = ' + cacheValue);
     this.connection.multi()
                    .set(cacheKey, cacheValue)
-                   .expire(cacheKey, 60)
+                   .expire(cacheKey, item.getEntityExpiration() || that.expireSeconds)
                    .exec(function (err, results) {
         if (err) {
             that.log('Error: putItem(): ' + err);
@@ -39,7 +42,7 @@ CacheRedis.prototype.putItemByClass = function(itemClass, item, callback) {
     this.log('cache putItemByClass(): key = ' + cacheKey + ' value = ' + cacheValue);
     this.connection.multi()
                    .set(cacheKey, cacheValue)
-                   .expire(cacheKey, 60)
+                   .expire(cacheKey,  itemClass.entityExpiration || that.expireSeconds)
                    .exec(function (err, results) {
         if (err) {
             that.log('Error: putItemByClass(): ' + err);
@@ -88,7 +91,7 @@ CacheRedis.prototype.putItems = function(itemClass, items, callback) {
     this.log('cache putItems(): key = ' + cacheKey+ ' value = ' + cacheValue);
     this.connection.multi()
                    .set(cacheKey, cacheValue)
-                   .expire(cacheKey, 60)
+                   .expire(cacheKey, itemClass.entityExpiration || that.expireSeconds)
                    .exec(function (err, results) {
         if (err) {
             that.log('Error: putItems(): ' + err);

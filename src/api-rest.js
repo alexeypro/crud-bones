@@ -8,7 +8,7 @@ var util        = require('util'),
     Item        = require('./models/item').Item;
 
 // Hint: not necessary, if you specify it to null/undefined DAO will not use it at all.
-var cache       = new CacheRedis(app.envConfig.storeRedis, app.redisClient, app.logmessage);
+var cache       = new CacheRedis(app.envConfig.storeRedis, app.redisClient, app.logmessage, app.defs.DEFAULT_CACHE_EXPIRE_SECS);
 
 // Hint: uncomment the line with MySQL and it'll be working with MySQL. :-) Magic, right?
 //var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage, cache);
