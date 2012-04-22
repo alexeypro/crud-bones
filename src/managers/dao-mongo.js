@@ -103,7 +103,7 @@ DaoMongo.prototype.list = function(itemClass, propNames, callback) {
         this.cache.getItems(itemClass, function(cachedErr, cachedResult) {   // get from cache
             if (cachedErr || !cachedResult) {
                 var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
-                var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+                var NeededMongoModel = that.connection.model(modelName, that.models[modelName]);
                 var query = NeededMongoModel.find( { } );
                 query.execFind(function (err, results) {
                     if (err) {
@@ -132,7 +132,7 @@ DaoMongo.prototype.get = function(itemClass, itemId, callback) {
         this.cache.getItem(itemClass, itemId, function(cachedErr, cachedResult) {   // get from cache
             if (cachedErr || !cachedResult) {
                 var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
-                var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+                var NeededMongoModel = that.connection.model(modelName, that.models[modelName]);
                 var findObj = { };
                 findObj[ itemClass.entityIndex ] = itemId;
                 NeededMongoModel.findOne(findObj, function (err, result) {
