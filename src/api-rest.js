@@ -4,11 +4,15 @@ var util        = require('util'),
     helper      = require('./helper'),
     DaoMysql    = require('./managers/dao-mysql').DaoMysql,
     DaoMongo    = require('./managers/dao-mongo').DaoMongo,
+    CacheRedis  = require('./managers/cache-redis').CacheRedis,
     Item        = require('./models/item').Item;
 
+// Hint: not necessary, if you specify it to null/undefined DAO will not use it at all.
+var cache       = new CacheRedis(app.envConfig.storeRedis, app.redisClient, app.logmessage);
+
 // Hint: uncomment the line with MySQL and it'll be working with MySQL. :-) Magic, right?
-//var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage);
-var dao         = new DaoMongo(app.envConfig.dbMongo, app.mongoClient, app.logmessage);
+var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage, cache);
+//var dao         = new DaoMongo(app.envConfig.dbMongo, app.mongoClient, app.logmessage, cache);
 
 dao.registerModel(Item);
 

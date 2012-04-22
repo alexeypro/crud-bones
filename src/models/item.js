@@ -14,6 +14,10 @@ Item.entityCreated = 'created';
 Item.entitySchema = { item_id: String, title: String, description: String, created: Date};
 Item.propNamesAsArray = [ 'item_id', 'title', 'description', 'created' ];
 
+Item.prototype.getClass = function() {
+    return Item;
+};
+
 Item.prototype.getEntityName = function() {
     return Item.entityName;
 };

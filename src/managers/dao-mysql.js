@@ -2,13 +2,14 @@ var uuid        = require('node-uuid'),
     helper      = require('../helper'),
     dateformat  = require('dateformat');
 
-function DaoMysql(cfg, conn, log) {
+function DaoMysql(cfg, conn, log, cache) {
     if (!cfg || !conn || !log) {
         throw new Error("Config and connection vars,  and log function are required.");
     }
     this.config = cfg;
     this.connection = conn;
     this.log = log;
+    this.cache = cache;
 }
 
 DaoMysql.prototype.registerModel = function(itemClass) {
@@ -30,9 +31,12 @@ DaoMysql.prototype.create = function(item, callback) {
         this.connection.query(queryStr, itemAsArray, function(err) {
             if (err) {
                 that.log('Error: create(): ' + err);
+            } else if (that.cache) {
+                that.cache.putItem(item);                   // cache item
+                that.cache.delItems(item.getClass());       // clear all items cache
             }
             if (callback) {
-                callback(false, item);
+                callback(err, item);
             }
             return item;
         });
@@ -49,7 +53,7 @@ DaoMysql.prototype.update = function(item, callback) {
     var that = this;
     var updated = dateformat('yyyy-mm-dd HH:MM:ss');
     if (item) {
-        item[ item.getEntityCreated() ] = created;
+        item[ item.getEntityCreated() ] = updated;
         // we assume first element in props is an index
         var propNames = item.getPropNamesAsArray();
         var slicedFields = propNames.slice(-propNames.length+1);
@@ -61,9 +65,14 @@ DaoMysql.prototype.update = function(item, callback) {
         this.log('update(): ' + queryStr);
         //this.log('update(): ' + itemAsArrayWithMovedIndex);
         this.connection.query(queryStr, itemAsArrayWithMovedIndex, function(err) {
-            that.log('Error: update(): ' + err);
+            if (err) {
+                that.log('Error: update(): ' + err);
+            } else if (that.cache) {
+                that.cache.putItem(item);               // cache item
+                that.cache.delItems(item.getClass());   // clear all items cache
+            }
             if (callback) {
-                callback(false, item);
+                callback(err, item);
             }
             return item;
         });
@@ -78,29 +87,60 @@ DaoMysql.prototype.update = function(item, callback) {
 
 DaoMysql.prototype.list = function(itemClass, propNames, callback) {
     var that = this;
-    var fields = propNames ? propNames : itemClass.propNamesAsArray;
-    var queryStr = 'SELECT ' + fields.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName + ' ORDER BY ' + itemClass.entityIndex + ' DESC';
-    this.log('list(): ' + queryStr);
-    this.connection.query(queryStr, function(err, results, fields) {
-        that.log('Error: list(): ' + err);
-        if (callback) {
-            callback(err, results);
-        }
-        return results;
-    });
+    if (this.cache) {
+        this.cache.getItems(itemClass, function(cachedErr, cachedResult) {   // get from cache
+            if (cachedErr || !cachedResult) {
+                var fields = propNames ? propNames : itemClass.propNamesAsArray;
+                var queryStr = 'SELECT ' + fields.join(',') + ' FROM ' + that.config.dbname + '.' + itemClass.entityName + ' ORDER BY ' + itemClass.entityIndex + ' DESC';
+                that.log('list(): ' + queryStr);
+                that.connection.query(queryStr, function(err, results, fields) {
+                    if (err) {
+                        that.log('Error: list(): ' + err);
+                    } else if (that.cache) {
+                        that.cache.putItems(itemClass, results);            // cache all items
+                    }
+                    if (callback) {
+                        callback(err, results);
+                    }
+                    return results;
+                });
+            } else {
+                if (callback) {
+                    callback(false, cachedResult);
+                }
+                return cachedResult;
+            }
+        });
+    }
 };
 
 DaoMysql.prototype.get = function(itemClass, itemId, callback) {
     var that = this;
-    var queryStr = 'SELECT ' + itemClass.propNamesAsArray.join(',') + ' FROM ' + this.config.dbname + '.' + itemClass.entityName + ' WHERE ' + itemClass.entityIndex + ' = ? LIMIT 1';
-    this.log('get(): ' + queryStr);
-    this.connection.query(queryStr, [ itemId ], function(err, result, fields) {
-        that.log('Error: get(): ' + err);
-        if (callback) {
-            callback(err, result ? result[0] : null);
-        }
-        return result[0];
-    });
+    if (this.cache) {
+        this.cache.getItem(itemClass, itemId, function(cachedErr, cachedResult) {   // get from cache
+            if (cachedErr || !cachedResult) {
+                var queryStr = 'SELECT ' + itemClass.propNamesAsArray.join(',') + ' FROM ' + that.config.dbname + '.' + itemClass.entityName + ' WHERE ' + itemClass.entityIndex + ' = ? LIMIT 1';
+                that.log('get(): ' + queryStr);
+                that.connection.query(queryStr, [ itemId ], function(err, result, fields) {
+                    var itemResult = result ? result[0] : null;
+                    if (err) {
+                        that.log('Error: get(): ' + err);
+                    } else if (that.cache) {
+                        that.cache.putItemByClass(itemClass, itemResult);     // put to cache
+                    }
+                    if (callback) {
+                        callback(err, itemResult);
+                    }
+                    return itemResult;
+                });
+            } else {
+                if (callback) {
+                    callback(false, cachedResult);
+                }
+                return cachedResult;
+            }
+        });
+    }
 };
 
 DaoMysql.prototype.remove = function(itemClass, itemId, callback) {
@@ -108,7 +148,12 @@ DaoMysql.prototype.remove = function(itemClass, itemId, callback) {
     var queryStr = 'DELETE FROM ' + this.config.dbname + '.' + itemClass.entityName + ' WHERE ' + itemClass.entityIndex + ' = ?';
     this.log('remove(): ' + queryStr);
     this.connection.query(queryStr, [ itemId ], function(err, result, fields) {
-        that.log('Error: remove(): ' + err);
+        if (err) {
+            that.log('Error: remove(): ' + err);
+        } else if (that.cache) {
+            that.cache.delItem(itemClass, itemId);      // del item from cache
+            that.cache.delItems(itemClass);             // clear all items cache
+        }
         if (callback) {
             callback(err, null);
         }

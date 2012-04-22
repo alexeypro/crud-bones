@@ -4,7 +4,7 @@ var uuid        = require('node-uuid'),
     helper      = require('../helper'),
     dateformat  = require('dateformat');
 
-function DaoMongo(cfg, conn, log) {
+function DaoMongo(cfg, conn, log, cache) {
     if (!cfg || !conn || !log) {
         throw new Error("Config and connection vars,  and log function are required.");
     }
@@ -12,6 +12,7 @@ function DaoMongo(cfg, conn, log) {
     this.connection = conn;
     this.log = log;
     this.models = { };
+    this.cache = cache;
 }
 
 DaoMongo.prototype.registerModel = function(itemClass) {
