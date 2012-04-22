@@ -99,18 +99,31 @@ DaoMongo.prototype.update = function(item, callback) {
 
 DaoMongo.prototype.list = function(itemClass, propNames, callback) {
     var that = this;
-    var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
-    var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
-    var query = NeededMongoModel.find( { } );
-    query.execFind(function (err, results) {
-        if (err) {
-            that.log('Error: list(): ' + err);
-        }
-        if (callback) {
-            callback(false, results);
-        }
-        return results;
-    }); 
+    if (this.cache) {
+        this.cache.getItems(itemClass, function(cachedErr, cachedResult) {   // get from cache
+            if (cachedErr || !cachedResult) {
+                var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
+                var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+                var query = NeededMongoModel.find( { } );
+                query.execFind(function (err, results) {
+                    if (err) {
+                        that.log('Error: list(): ' + err);
+                    } else if (that.cache) {
+                        that.cache.putItems(itemClass, results);            // cache all items
+                    }
+                    if (callback) {
+                        callback(false, results);
+                    }
+                    return results;
+                }); 
+            } else {
+                if (callback) {
+                    callback(false, cachedResult);
+                }
+                return cachedResult;
+            }
+        });
+    }
 };
 
 DaoMongo.prototype.get = function(itemClass, itemId, callback) {
