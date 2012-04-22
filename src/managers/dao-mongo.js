@@ -40,6 +40,9 @@ DaoMongo.prototype.create = function(item, callback) {
         m.save(function(err) {
             if (err) {
                 that.log('Error: create(): ' + err);
+            } else if (that.cache) {
+                that.cache.putItem(item);                   // cache item
+                that.cache.delItems(item.getClass());       // clear all items cache
             }
             if (callback) {
                 callback(false, item);
@@ -76,6 +79,9 @@ DaoMongo.prototype.update = function(item, callback) {
         NeededMongoModel.update(findObj, { $set: updateObj }, options, function(err){
             if (err) {
                 that.log('Error: update(): ' + err);
+            } else if (that.cache) {
+                that.cache.putItem(item);               // cache item
+                that.cache.delItems(item.getClass());   // clear all items cache
             }
             if (callback) {
                 callback(false, item);
@@ -133,6 +139,9 @@ DaoMongo.prototype.remove = function(itemClass, itemId, callback) {
     NeededMongoModel.remove(findObj, function (err, result) {
         if (err) {
             that.log('Error: remove(): ' + err);
+        } else if (that.cache) {
+            that.cache.delItem(itemClass, itemId);      // del item from cache
+            that.cache.delItems(itemClass);             // clear all items cache
         }
         if (callback) {
             callback(false, result);
