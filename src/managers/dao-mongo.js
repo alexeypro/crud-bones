@@ -139,7 +139,7 @@ DaoMongo.prototype.get = function(itemClass, itemId, callback) {
                     if (err) {
                         that.log('Error: get(): ' + err);
                     } else if (that.cache) {
-                        that.cache.putItemByClass(itemClass, itemResult);     // put to cache
+                        that.cache.putItemByClass(itemClass, result);     // put to cache
                     }
                     if (callback) {
                         callback(false, result);
