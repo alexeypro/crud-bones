@@ -19,7 +19,7 @@ CacheRedis.prototype.putItem = function(item, callback) {
     var itemId = item[ item.getEntityIndex() ];
     var cacheKey = item.getEntityName() + ':' + itemId;
     var cacheValue = JSON.stringify(item || {});
-    this.log('cache putItem(): key = ' + cacheKey + ' value = ' + cacheValue);
+    this.log('cache putItem(): key = ' + cacheKey + ' value = ...');
     this.connection.multi()
                    .set(cacheKey, cacheValue)
                    .expire(cacheKey, item.getEntityExpiration() || that.expireSeconds)
@@ -39,7 +39,7 @@ CacheRedis.prototype.putItemByClass = function(itemClass, item, callback) {
     var itemId = item[ itemClass.entityIndex ];
     var cacheKey = itemClass.entityName + ':' + itemId;
     var cacheValue = JSON.stringify(item || {});
-    this.log('cache putItemByClass(): key = ' + cacheKey + ' value = ' + cacheValue);
+    this.log('cache putItemByClass(): key = ' + cacheKey + ' value = ...');
     this.connection.multi()
                    .set(cacheKey, cacheValue)
                    .expire(cacheKey,  itemClass.entityExpiration || that.expireSeconds)
@@ -88,7 +88,7 @@ CacheRedis.prototype.putItems = function(itemClass, items, callback) {
     var that = this;
     var cacheKey = itemClass.entityName + ':*';
     var cacheValue = JSON.stringify(items || {});
-    this.log('cache putItems(): key = ' + cacheKey+ ' value = ' + cacheValue);
+    this.log('cache putItems(): key = ' + cacheKey+ ' value = ...');
     this.connection.multi()
                    .set(cacheKey, cacheValue)
                    .expire(cacheKey, itemClass.entityExpiration || that.expireSeconds)
