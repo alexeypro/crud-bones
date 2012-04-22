@@ -115,19 +115,32 @@ DaoMongo.prototype.list = function(itemClass, propNames, callback) {
 
 DaoMongo.prototype.get = function(itemClass, itemId, callback) {
     var that = this;
-    var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
-    var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
-    var findObj = { };
-    findObj[ itemClass.entityIndex ] = itemId;
-    NeededMongoModel.findOne(findObj, function (err, result) {
-        if (err) {
-            that.log('Error: get(): ' + err);
-        }
-        if (callback) {
-            callback(false, result);
-        }
-        return result;
-    });
+    if (this.cache) {
+        this.cache.getItem(itemClass, itemId, function(cachedErr, cachedResult) {   // get from cache
+            if (cachedErr || !cachedResult) {
+                var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
+                var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
+                var findObj = { };
+                findObj[ itemClass.entityIndex ] = itemId;
+                NeededMongoModel.findOne(findObj, function (err, result) {
+                    if (err) {
+                        that.log('Error: get(): ' + err);
+                    } else if (that.cache) {
+                        that.cache.putItemByClass(itemClass, itemResult);     // put to cache
+                    }
+                    if (callback) {
+                        callback(false, result);
+                    }
+                    return result;
+                });
+            } else {
+                if (callback) {
+                    callback(false, cachedResult);
+                }
+                return cachedResult;
+            }
+        });
+    }
 };
 
 DaoMongo.prototype.remove = function(itemClass, itemId, callback) {
