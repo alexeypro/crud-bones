@@ -11,8 +11,8 @@ var util        = require('util'),
 var cache       = new CacheRedis(app.envConfig.storeRedis, app.redisClient, app.logmessage);
 
 // Hint: uncomment the line with MySQL and it'll be working with MySQL. :-) Magic, right?
-var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage, cache);
-//var dao         = new DaoMongo(app.envConfig.dbMongo, app.mongoClient, app.logmessage, cache);
+//var dao         = new DaoMysql(app.envConfig.dbMysql, app.mysqlClient, app.logmessage, cache);
+var dao         = new DaoMongo(app.envConfig.dbMongo, app.mongoClient, app.logmessage, cache);
 
 dao.registerModel(Item);
 
