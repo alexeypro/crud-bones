@@ -16,6 +16,7 @@ function DaoMongo(cfg, conn, log, cache) {
 }
 
 DaoMongo.prototype.registerModel = function(itemClass) {
+    var that = this;
     var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
     this.models[modelName] = new mongoose.Schema( itemClass.entitySchema );
 };
@@ -91,6 +92,7 @@ DaoMongo.prototype.update = function(item, callback) {
 };
 
 DaoMongo.prototype.list = function(itemClass, propNames, callback) {
+    var that = this;
     var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
     var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
     var query = NeededMongoModel.find( { } );
@@ -106,6 +108,7 @@ DaoMongo.prototype.list = function(itemClass, propNames, callback) {
 };
 
 DaoMongo.prototype.get = function(itemClass, itemId, callback) {
+    var that = this;
     var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
     var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
     var findObj = { };
@@ -122,6 +125,7 @@ DaoMongo.prototype.get = function(itemClass, itemId, callback) {
 };
 
 DaoMongo.prototype.remove = function(itemClass, itemId, callback) {
+    var that = this;
     var modelName = helper.capitalize(itemClass.entityName + 'MongoModel');
     var NeededMongoModel = this.connection.model(modelName, this.models[modelName]);
     var findObj = { };
