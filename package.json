@@ -2,6 +2,9 @@
     "author":       "Alexey Prohorenko",
     "name":         "crud-bones",
     "version":      "0.0.1",
+    "scripts": {
+       "start": "node src/server.js"
+    },
 
     "description":  "Skeleton of CRUD application in Node.JS coming with all commonly used modules.",
     "homepage":     [ "http://alexeypro.com", "https://github.com/alexeypro/crud-bones" ],
