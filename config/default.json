@@ -1,8 +1,8 @@
 {
     "server": {
-        "port":        81,
+        "port":        8080,
         "forks":        1,
-        "siteUrl":      "http://localhost:81"
+        "siteUrl":      "http://localhost:8080"
     },
     "dbMysql": {
         "host":         "localhost",
