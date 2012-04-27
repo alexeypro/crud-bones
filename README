@@ -40,3 +40,14 @@ $ git commit -m 'bundle for heroku-dev deploy'
 $ git remote add heroku-dev git@heroku.com:crud-bones-dev.git
 $ heroku config:add NODE_ENV=staging --app crud-bones-dev
 $ git push -f heroku-dev master
+
+* dotCloud:
+
+$ dot create crudbonesdev
+$ dot push crudbonesdev .
+
+Unfortunately at this moment it doesn't seem to be supporting newer Node.JS
+
+* Engine Yard 
+
+N/A (in progress :-)
